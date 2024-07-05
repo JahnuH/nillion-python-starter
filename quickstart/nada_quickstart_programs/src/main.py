@@ -3,10 +3,29 @@ def nada_main():
 
     party1 = Party(name="Party1")
 
-    my_int1 = SecretInteger(Input(name="my_int1", party=party1))
+    # Define input matrices as secret integers
+    matrix_a = [
+        [SecretInteger(Input(name=f"a_{i}_{j}", party=party1)) for j in range(2)]
+        for i in range(2)
+    ]
+    matrix_b = [
+        [SecretInteger(Input(name=f"b_{i}_{j}", party=party1)) for j in range(2)]
+        for i in range(2)
+    ]
 
-    my_int2 = SecretInteger(Input(name="my_int2", party=party1))
+    # Perform matrix multiplication
+    result_matrix = [
+        [
+            (matrix_a[i][0] * matrix_b[0][j]) + (matrix_a[i][1] * matrix_b[1][j])
+            for j in range(2)
+        ]
+        for i in range(2)
+    ]
 
-    new_int = my_int1 + my_int2
+    # Define the output
+    outputs = []
+    for i in range(2):
+        for j in range(2):
+            outputs.append(Output(result_matrix[i][j], name=f"result_{i}_{j}", party=party1))
 
-    return [Output(new_int, "my_output", party1)]
+    return outputs

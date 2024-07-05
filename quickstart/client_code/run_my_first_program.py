@@ -1,11 +1,3 @@
-"""
-In this example, we:
-1. connect to the local nillion-devnet
-2. store the secret addition program
-3. store a secret to be used in the computation
-4. compute the secret addition program with the stored secret and another computation time secret
-"""
-
 import asyncio
 import py_nillion_client as nillion
 import os
@@ -71,16 +63,14 @@ async def main():
     print("Stored program. action_id:", action_id)
     print("Stored program_id:", program_id)
 
-    # 4. Create the 1st secret, add permissions, pay for and store it in the network
-    # Create a secret named "my_int1" with any value, ex: 500
     new_secret = nillion.NadaValues(
-        {
-            "my_int1": nillion.SecretInteger(500),
-        }
-    )
+    {
+        "a_0_0": nillion.SecretInteger(1),
+        "a_0_1": nillion.SecretInteger(2),
+        "a_1_0": nillion.SecretInteger(3),
+        "a_1_1": nillion.SecretInteger(4),
+    })
 
-    # Set the input party for the secret
-    # The party name needs to match the party name that is storing "my_int1" in the program
     party_name = "Party1"
 
     # Set permissions for the client to compute on the program
@@ -102,13 +92,18 @@ async def main():
     print(f"Computing using program {program_id}")
     print(f"Use secret store_id: {store_id}")
 
-    # 5. Create compute bindings to set input and output parties, add a computation time secret and pay for & run the computation
     compute_bindings = nillion.ProgramBindings(program_id)
     compute_bindings.add_input_party(party_name, party_id)
     compute_bindings.add_output_party(party_name, party_id)
 
-    # Add my_int2, the 2nd secret at computation time
-    computation_time_secrets = nillion.NadaValues({"my_int2": nillion.SecretInteger(10)})
+    computation_time_secrets = nillion.NadaValues(
+      {
+          "b_0_0": nillion.SecretInteger(5),
+          "b_0_1": nillion.SecretInteger(6),
+          "b_1_0": nillion.SecretInteger(7),
+          "b_1_1": nillion.SecretInteger(8),
+      }
+    )
 
     # Pay for the compute
     receipt_compute = await get_quote_and_pay(
